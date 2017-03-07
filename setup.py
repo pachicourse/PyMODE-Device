@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 from mode-py import __author__, __version__, __license__
  
 setup(
-        name             = 'mode-py',
+        name             = 'mode',
         version          = __version__,
         description      = '',
         license          = __license__,
