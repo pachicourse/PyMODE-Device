@@ -11,7 +11,7 @@ class Device:
 		self.devicId = ''
 		self.token = ''
 		
-	def set_apt_host(self, host):
+	def set_api_host(self, host):
 		self.host = host
 	
 	def set_device_keys(self, deviceId, token):
@@ -19,7 +19,6 @@ class Device:
 		self.token = token
 
 	def trigger_event(self, eventType, eventData):
-		#print('https://' + self.host + '/devices/' + str(self.deviceId) + '/event')
 		r = requests.put('https://' + self.host + '/devices/' + str(self.deviceId) + '/event', \
 				 json.dumps({"eventType":eventType, "eventData":eventData}), \
 			         headers={'Content-Type':'application/json','Authorization':'ModeCloud ' + self.token})
