@@ -23,6 +23,3 @@ class Device:
 				 json.dumps({"eventType":eventType, "eventData":eventData}), \
 			         headers={'Content-Type':'application/json','Authorization':'ModeCloud ' + self.token})
 		print(r)	 
- 
-def foo():
-	print('foo')
