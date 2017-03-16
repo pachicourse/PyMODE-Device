@@ -4,7 +4,8 @@ from setuptools import setup, find_packages
 from mode import __author__, __version__, __license__
 
 requirements = [
-    'requests >= 2.5.2, != 2.11.0, != 2.12.2'
+    'requests >= 2.5.2, != 2.11.0, != 2.12.2',
+    'websocket-client >= 0.40.0'
 ]
  
 setup(

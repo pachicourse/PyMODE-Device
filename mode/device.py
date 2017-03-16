@@ -3,14 +3,19 @@
 
 import requests
 import json
+import websocket
+import threading
 
 class Device:
+	
 	def __init__(self):
-		self.host = 'api.tinkermode.com'
-		self.port = 443
-		self.devicId = ''
-		self.token = ''
-		
+		self.host              = 'api.tinkermode.com'
+		self.port              = 443
+		self.devicId           = ''
+		self.token             = ''
+		self.websocket_debug   = False
+		self.wait              = 0.5
+
 	def set_api_host(self, host):
 		self.host = host
 	
@@ -18,11 +23,61 @@ class Device:
 		self.deviceId = deviceId
 		self.token = token
 
+	def websocket_trace(self, b):
+		self.websocket_debug = b
+
 	def trigger_event(self, eventType, eventData):
 		r = requests.put('https://' + self.host + '/devices/' + str(self.deviceId) + '/event', \
 				 json.dumps({"eventType":eventType, "eventData":eventData}), \
 			         headers={'Content-Type':'application/json','Authorization':'ModeCloud ' + self.token})
-		print(r)	 
- 
-def foo():
-	print('foo')
+		print(r)	
+	
+	def listen_commands(self):
+		websocket.enableTrace(self.websocket_debug)
+		ws = websocket.WebSocketApp('wss://' + self.host + '/devices/' + str(self.deviceId) + '/command',
+					    header=["Authorization: ModeCloud %s" % self.token], on_open=self.on_open, \
+					    on_message=self.on_message, on_error=self.on_error, on_close=self.on_close)
+
+		# Start websocket
+		try:
+			ws.run_forever()
+		# Ctrl+C to close websocket
+		except KeyboardInterrupt:
+			ws.close()
+	
+	# websocket callback methods
+	# when open websocke
+	def on_open(self, ws):
+		self.wait = 0.5
+		print('connected')
+
+	# when get message
+	def on_message(ws, message):
+		print(message)
+
+	# when error
+	def on_error(self, ws, error):
+		print("error")
+		if self.wait < 60:
+			self.wait *= 2 # first error => wait for 1sec.
+		print(self.wait)
+		self._try_reconnect(ws)
+	
+	# when close websocket
+	def on_close(self, ws):
+		print('disconnected')
+
+	def _try_reconnect(self, ws):
+		print('wait for', self.wait, 'sec to reconnect')
+		t = threading.Timer(self.wait, self._reconnect, args=[ws])
+		t.start();
+
+	def _reconnect(self, ws):
+		print('reconnecting ..')
+		
+		#start websocket
+		try:
+			ws.run_forever()
+		# Ctrl+C to close websocket
+		except KeyboardInterrupt:
+			ws.close()
