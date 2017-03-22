@@ -32,15 +32,15 @@ class Device:
 
     def trigger_event(self, eventType, eventData):
         r = requests.put('https://' + self.host + '/devices/' + str(self.deviceId) + '/event', \
-        		         json.dumps({"eventType":eventType, "eventData":eventData}), \
-        	             headers={'Content-Type':'application/json','Authorization':'ModeCloud ' + self.token})
+                         json.dumps({"eventType":eventType, "eventData":eventData}), \
+                         headers={'Content-Type':'application/json','Authorization':'ModeCloud ' + self.token})
         print(r)	
     
     def listen_commands(self):
         websocket.enableTrace(self.websocket_debug)
         ws = websocket.WebSocketApp('wss://' + self.host + '/devices/' + str(self.deviceId) + '/command',
-        			                header=["Authorization: ModeCloud %s" % self.token], on_open=self._on_open, \
-        			                on_message=self._on_message, on_error=self._on_error, on_close=self._on_close)
+       	                            header=["Authorization: ModeCloud %s" % self.token], on_open=self._on_open, \
+                                    on_message=self._on_message, on_error=self._on_error, on_close=self._on_close)
 
         # Start websocket
         try:
