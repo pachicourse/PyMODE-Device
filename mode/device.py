@@ -15,10 +15,10 @@ class Device:
         self.token = ''
         self.websocket_debug = False
         self.wait = 0.5
-        self.ex_on_open = _default_extend_function
-        self.ex_on_message = _default_extend_function
-        self.ex_on_error = _default_extend_function
-        self.ex_on_close = _default_extend_function
+        self.ex_on_open = _default_set_function
+        self.ex_on_message = _default_set_function
+        self.ex_on_error = _default_set_function
+        self.ex_on_close = _default_set_function
 
     def set_api_host(self, host):
         self.host = host
@@ -91,19 +91,19 @@ class Device:
         except KeyboardInterrupt:
             ws.close()
 
-    # extend websocket callback methods  
-    def extend_on_open(self, f):
+    # set websocket callback methods  
+    def set_on_open(self, f):
         self.ex_on_open = f
     
-    def extend_on_message(self, f):
+    def set_on_message(self, f):
         self.ex_on_message = f
     
-    def extend_on_error(self, f):
+    def set_on_error(self, f):
         self.ex_on_error = f
     
-    def extend_on_close(self, f):
+    def set_on_close(self, f):
         self.ex_on_close = f
 
-def _default_extend_function(*arg):
+def _default_set_function(*arg):
     return
 
